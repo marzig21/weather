@@ -1,0 +1,24 @@
+info:
+  title: 'Better Weather'
+  description: 'A basic weather API'
+  ## TODO: Replace this IP address with your 21 address
+  ##       You can get your IP address by running the following command
+  ## python3 -c 'from two1.commands.util import zerotier; print(zerotier.get_address("21market"))'
+  x-21-quick-buy: '21 buy url http://marzig21.com:5000/hello'
+  x-21-category: utilities
+  x-21-app-image: "https://cdn.filepicker.io/api/file/x6J1kiKyT9WhjmbqBrAb"
+  x-21-total-price:
+    min: 2000
+    max: 2000
+  contact:
+    ## TODO: Replace this information with your own
+    name: Mike Marzigliano
+    email: marzig76@gmail.com
+## TODO: Replace this IP address with your 21 address
+##       You can get your IP address by running the following command
+## python3 -c 'from two1.commands.util import zerotier; print(zerotier.get_address("21market"))'
+host: marzig21.com:5000
+schemes:
+  - http
+basePath: /
+x-21-manifest-path: /manifest
