@@ -1,3 +1,4 @@
+import re
 import flask
 from flask import request
 from two1.wallet import Wallet
@@ -11,32 +12,46 @@ payment = Payment(app, Wallet())
 
 
 @app.route('/weather')
-@payment.required(5000)
+@payment.required(2000)
 def weather():
-    latlon = request.args.get('latlon')
-    base_url = "https://api.forecast.io/forecast/"
-    api_key = "secret-api-key!"
-    url = base_url + api_key + "/" + latlon
+    if 'latlon' in request.args:
+        latlon = request.args.get('latlon')
+        
+        regex = "^[-]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$"
+        if re.match(regex, latlon) is not None:
+            base_url = "https://api.forecast.io/forecast/"
+            api_key = "secret-api-key"
+            url = base_url + api_key + "/" + latlon
 
-    response = requests.get(url)
+            response = requests.get(url)
 
-    jcontent = json.loads(response.content.decode('utf-8'))
-    currently = jcontent['currently']
+            jcontent = json.loads(response.content.decode('utf-8'))
+            currently = jcontent['currently']
 
-    temp = currently['temperature']
-    summary = currently['icon']
-    precipIntensity = currently['precipIntensity']
+            temp = currently['temperature']
+            summary = currently['icon']
+            precipIntensity = currently['precipIntensity']
 
-    if precipIntensity == 0:
-        precipType = "none"
+            if precipIntensity == 0:
+                precipType = "none"
+            else:
+                precipType = currently['precipType']
+
+            result = {
+                "latlon": latlon,
+                "temperature": temp,
+                "summary": summary,
+                "precipType": precipType,
+            }
+        else:
+            result = {
+                "error": "latlon malformed"
+            }
+
     else:
-        precipType = currently['precipType']
-
-    result = {
-        "temperature": temp,
-        "summary": summary,
-        "precipType": precipType,
-    }
+        result = {
+            "error": "latlon missing; add something like this to your call: ?latlon=33,-110"
+        }
 
     return json.dumps(result)
 
