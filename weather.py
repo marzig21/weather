@@ -10,6 +10,14 @@ import json
 app = flask.Flask(__name__)
 payment = Payment(app, Wallet())
 
+@app.route('/manifest')
+def manifest():
+    """Provide the app manifest to the 21 crawler.
+    """
+    with open('manifest.yaml', 'r') as f:
+        manifest = yaml.load(f)
+    return json.dumps(manifest)
+
 
 @app.route('/weather')
 @payment.required(2000)
@@ -20,7 +28,7 @@ def weather():
         regex = "^[-]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$"
         if re.match(regex, latlon) is not None:
             base_url = "https://api.forecast.io/forecast/"
-            api_key = "secret-api-key"
+            api_key = "secret-api-key" # get api from the dark sky forcast https://developer.forecast.io/
             url = base_url + api_key + "/" + latlon
 
             response = requests.get(url)
